@@ -1,59 +1,41 @@
 <?php
-/*Zoom Video Communications, Inc. 2015*/
-/*Zoom Support*/
+namespace Zoom;
+
+use Zoom\Endpoint\Users;
 
 class ZoomAPI{
 
-	/*The API Key, Secret, & URL will be used in every function.*/
-	private $api_key = 'Please Input Your Own API Key Here';
-	private $api_secret = 'Please Input Your Own API Secret Here';
-	private $api_url = 'https://api.zoom.us/v1/';
+	/**
+	 * @var null
+	 */
+	private $apiKey = null;
 
-	/*Function to send HTTP POST Requests*/
-	/*Used by every function below to make HTTP POST call*/
-	function sendRequest($calledFunction, $data){
-		/*Creates the endpoint URL*/
-		$request_url = $this->api_url.$calledFunction;
+	/**
+	 * @var null
+	 */
+	private $apiSecret = null;
 
-		/*Adds the Key, Secret, & Datatype to the passed array*/
-		$data['api_key'] = $this->api_key;
-		$data['api_secret'] = $this->api_secret;
-		$data['data_type'] = 'JSON';
+	/**
+	 * Zoom constructor.
+	 * @param $apiKey
+	 * @param $apiSecret
+	 */
+	public function __construct( $apiKey, $apiSecret ) {
 
-		$postFields = http_build_query($data);
-		/*Check to see queried fields*/
-		/*Used for troubleshooting/debugging*/
-		echo $postFields;
+		$this->apiKey = $apiKey;
 
-		/*Preparing Query...*/
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-		curl_setopt($ch, CURLOPT_URL, $request_url);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
-		$response = curl_exec($ch);
-		
-		curl_close($ch);
-
-		/*Will print back the response from the call*/
-		/*Used for troubleshooting/debugging		*/
-		echo $request_url;
-		var_dump($data);
-		var_dump($response);
-		if(!$response){
-			return false;
-		}
-		/*Return the data in JSON format*/
-		return json_decode($response);
+		$this->apiSecret = $apiSecret;
 	}
+
+
 	/*Functions for management of users*/
 
-	function createAUser(){		
-		$createAUserArray = array();
-		$createAUserArray['email'] = $_POST['userEmail'];
-		$createAUserArray['type'] = $_POST['userType'];
-		return $this->sendRequest('user/create', $createAUserArray);
+	public function createUser(){
+		$createAUserArray['action'] = 'create';
+		$createAUserArray['email'] = $_POST['email'];
+		$createAUserArray['user_info'] = $_POST['user_info'];
+		$user = new Users($this->apiKey, $this->apiSecret);
+		return $user->create($createAUserArray);
 	}   
 
 	function autoCreateAUser(){
@@ -74,7 +56,7 @@ class ZoomAPI{
 	function deleteAUser(){
 	  $deleteAUserArray = array();
 	  $deleteAUserArray['id'] = $_POST['userId'];
-	  return $this->sendRequest('user/delete', $deleteUserArray);
+	  return $this->sendRequest('user/delete', $deleteAUserArray);
 	}     
 
 	function listUsers(){
