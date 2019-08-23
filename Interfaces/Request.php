@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @copyright  https://github.com/UsabilityDynamics/zoom-api-php-client/blob/master/LICENSE
+ */
 namespace Zoom\Interfaces;
 
 use Firebase\JWT\JWT;

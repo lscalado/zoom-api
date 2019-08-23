@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @copyright  https://github.com/UsabilityDynamics/zoom-api-php-client/blob/master/LICENSE
+ */
 namespace Zoom\Endpoint;
 
 use Zoom\Interfaces\Request;
